@@ -33,7 +33,7 @@ npm install --save @aps_sdk/authentication @aps_sdk/model-derivative @aps_sdk/os
 - File auth.js xử lý các yêu cầu liên quan đến xác thực
 - "mount" router: gắn router vào ứng dụng server để sử dụng các route được định nghĩa trong auth.js
 
-* Quy trình hoạt động:
+* Luồng chạy:
   - Client gửi yêu cầu đến /api/auth/token.
   - Server chuyển yêu cầu này đến router trong auth.js.
   - Router xử lý yêu cầu, tạo token và trả về JSON cho client.
@@ -63,6 +63,27 @@ npm install --save @aps_sdk/authentication @aps_sdk/model-derivative @aps_sdk/os
 - Tạo file models.js trong folder routes
 - mount router đến server application -> sửa file server.js
 
+* Luồng chạy:
+1. Client gửi yêu cầu: Liệt kê tệp, tải tệp lên, hoặc kiểm tra trạng thái.
+2. Server xử lý:
+- Đảm bảo Bucket tồn tại.
+- Tải tệp lên và quản lý thông tin tệp.
+- Chuyển đổi tệp sang định dạng hiển thị.
+Kiểm tra trạng thái quá trình chuyển đổi.
+3. Kết quả trả về client:
+- Danh sách tệp (kèm URN) trong Bucket.
+- Trạng thái và tiến độ chuyển đổi.
+
+Client --> Server --> Data Management:
+                --> Ensure Bucket Exists
+                --> List Objects / Upload Object
+
+Client --> Server --> Derivatives:
+                --> Translate Object (Start Job)
+                --> Get Manifest (Check Status)
+
+Kết quả --> Client
+
 # Viewer $ UI
 - Build client-side piece of the application
 ```
@@ -81,3 +102,19 @@ npm install --dev @types/forge-viewer
 - Tạo file main.css
 
 -> run  http://localhost:8080
+
+* Luồng chạy:
+1. Truy cập trang:
+  - index.html tải các tệp cần thiết và khởi chạy main.js.
+2. Khởi tạo Viewer:
+  - initViewer khởi tạo Autodesk Viewer trong phần tử DOM #preview.
+3. Tải danh sách mô hình:
+  - Fetch danh sách từ API /api/models và hiển thị trong dropdown.
+4. Xử lý chọn mô hình:
+  - Khi người dùng chọn một mô hình:
+  - Fetch trạng thái từ /api/models/{urn}/status.
+  - Nếu mô hình đã sẵn sàng, gọi loadModel để tải lên Viewer.
+5. Tải lên mô hình:
+  - Người dùng chọn tệp.
+  - Gửi POST request đến /api/models.
+  - Cập nhật dropdown và chọn mô hình mới tải lên.

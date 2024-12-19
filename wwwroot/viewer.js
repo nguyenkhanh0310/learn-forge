@@ -1,11 +1,13 @@
 /// import * as Autodesk from "@types/forge-viewer";
 
+// truy vấn access token từ api /api/auth/token để cấp quyền truy cập dữ liệu trên autodesk platform
 async function getAccessToken(callback) {
   try {
     const resp = await fetch('/api/auth/token');
     if (!resp.ok) {
       throw new Error(await resp.text());
     }
+    // console.log("get access token",resp);
     const { access_token, expires_in } = await resp.json();
     callback(access_token, expires_in);
   } catch (err) {
@@ -14,7 +16,7 @@ async function getAccessToken(callback) {
   }
 }
 
-// create a new instance of the viewer in the specified DOM container
+// khởi tạo viewer trên giao diện tại thẻ DOM xác định: container
 export function initViewer(container) {
   return new Promise(function (resolve, reject) {
     Autodesk.Viewing.Initializer({ env: 'AutodeskProduction', getAccessToken }, function () {
@@ -29,7 +31,7 @@ export function initViewer(container) {
   });
 }
 
-// load a specifice modal to the viewer
+// Tải 1 mô hình cụ thể lên viewer bằng URN
 export function loadModel(viewer, urn) {
   return new Promise(function (resolve, reject) {
     function onDocumentLoadSuccess(doc) {

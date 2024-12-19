@@ -1,11 +1,13 @@
 import { initViewer, loadModel } from './viewer.js';
 
+// initViewer từ viewer.js được gọi, truyền phần tử DOM #preview để tạo viewer trong đó
 initViewer(document.getElementById('preview')).then(viewer => {
   const urn = window.location.hash?.substring(1);
   setupModelSelection(viewer, urn);
   setupModelUpload(viewer);
 });
 
+// Fetch danh sách các model từ API /api/models
 async function setupModelSelection(viewer, selectedUrn) {
   const dropdown = document.getElementById('models');
   dropdown.innerHTML = '';
@@ -15,6 +17,7 @@ async function setupModelSelection(viewer, selectedUrn) {
       throw new Error(await resp.text());
     }
     const models = await resp.json();
+    // hiển thị danh sách các model trong dropdown
     dropdown.innerHTML = models.map(model => `<option value=${model.urn} ${model.urn === selectedUrn ? 'selected' : ''}>${model.name}</option>`).join('\n');
     dropdown.onchange = () => onModelSelected(viewer, dropdown.value);
     if (dropdown.value) {
@@ -26,6 +29,7 @@ async function setupModelSelection(viewer, selectedUrn) {
   }
 }
 
+// Tải lên mô hình
 async function setupModelUpload(viewer) {
   const upload = document.getElementById('upload');
   const input = document.getElementById('input');
